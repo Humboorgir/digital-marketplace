@@ -38,7 +38,10 @@ const Home = () => {
           </p>
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 mt-6">
             <Button href="/products">Browse trending</Button>
-            <Button variant="ghost">Our quality promise &rarr;</Button>
+            <Button className="group" variant="ghost">
+              Our quality promise
+              <span className="ml-1 transition-all duration-300 group-hover:translate-x-1">&rarr;</span>
+            </Button>
           </div>
         </div>
 
