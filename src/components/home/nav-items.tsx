@@ -1,13 +1,18 @@
 "use client";
 
 import { PRODUCT_CATEGORIES } from "@/config";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import NavItem from "./nav-item";
+import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 
 const NavItems = () => {
   const [activeIndex, setActiveIndex] = useState<null | number>(null);
+  const navRef = useRef<HTMLDivElement | null>(null);
+
+  useOnClickOutside(navRef, () => setActiveIndex(null));
+
   return (
-    <div className="flex h-full items-center">
+    <div ref={navRef} className="flex h-full items-center">
       {PRODUCT_CATEGORIES.map((category, i) => {
         const handleOpen = () => {
           if (activeIndex == i) {
