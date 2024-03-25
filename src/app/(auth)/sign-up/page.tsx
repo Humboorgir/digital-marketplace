@@ -49,7 +49,7 @@ const Page = () => {
             name="email"
             id="email"
           />
-          {errors.email && <span className="text-xs text-red-500">{errors.email?.message}</span>}
+          {errors.email && <span className="text-xs text-red-600">{errors.email?.message}</span>}
         </div>
         <div className="py-2">
           <label htmlFor="password" className="text-gray-900">
@@ -62,7 +62,7 @@ const Page = () => {
             name="password"
             id="password"
           />
-          {errors.password && <span className="text-xs text-red-500">{errors.password?.message}</span>}
+          {errors.password && <span className="text-xs text-red-600">{errors.password?.message}</span>}
         </div>
         <Button className="mt-2 w-full">Sign up</Button>
       </form>

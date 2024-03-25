@@ -1,4 +1,5 @@
 import Navbar from "@/components/home/navbar";
+import Providers from "@/components/Providers";
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -21,8 +22,10 @@ export default function RootLayout({
     <html className="h-full" lang="en">
       <body className={cn("relative h-full font-sans antialiased", inter.className)}>
         <main className="relative flex flex-col min-h-screen">
-          <Navbar />
-          <div className="flex-1 flex flex-col">{children}</div>
+          <Providers>
+            <Navbar />
+            <div className="flex-1 flex flex-col">{children}</div>
+          </Providers>
         </main>
       </body>
     </html>
