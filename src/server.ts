@@ -1,12 +1,11 @@
 import express from "express";
 import next from "next";
-import payload from "payload";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { appRouter } from "./trpc";
+import { getPayloadClient } from "./lib/getPayloadClient";
 
-const app = express();
+export const app = express();
 const PORT = Number(process.env.PORT) || 3000;
-const PAYLOAD_SECRET = process.env.PAYLOAD_SECRET;
 
 // Getting nextHandler
 const nextApp = next({
@@ -16,13 +15,12 @@ const nextApp = next({
 const nextHandler = nextApp.getRequestHandler();
 
 async function start() {
-  if (!PAYLOAD_SECRET) throw new Error("Couldn't find process.env.PAYLOAD_SECRET");
-
-  await payload.init({
-    secret: PAYLOAD_SECRET,
-    express: app,
-    onInit: async (cms) => {
-      cms.logger.info(`Admin URL: ${cms.getAdminURL()}`);
+  const payload = await getPayloadClient({
+    initOptions: {
+      express: app,
+      onInit: async (cms) => {
+        cms.logger.info(`Admin URL: ${cms.getAdminURL()}`);
+      },
     },
   });
 

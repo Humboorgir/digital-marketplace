@@ -8,6 +8,7 @@ import { credentialsValidator } from "@/lib/validators/credentials-validator";
 import type { CredentialsValidator } from "@/lib/validators/credentials-validator";
 
 import { cn } from "@/lib/utils";
+import { trpc } from "@/trpc/client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -23,10 +24,10 @@ const Page = () => {
     resolver: zodResolver(credentialsValidator),
   });
 
+  const { isLoading, mutate } = trpc.auth.createPayloadUser.useMutation({});
+
   function onSubmit({ email, password }: CredentialsValidator) {
-    // TODO: handle sign up
-    console.table({ email, password });
-    return;
+    mutate({ email, password });
   }
 
   return (
@@ -57,6 +58,7 @@ const Page = () => {
           </label>
           <Input
             {...register("password")}
+            type="password"
             className={cn("w-full", errors.password && "border-red-500 focus-visible:outline-red-500")}
             placeholder="Password"
             name="password"
