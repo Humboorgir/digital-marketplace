@@ -1,9 +1,11 @@
 import Navbar from "@/components/home/navbar";
 import Providers from "@/components/Providers";
 
+import { cn } from "@/lib/utils";
+import { Toaster } from "sonner";
+
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { cn } from "@/lib/utils";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "700"] });
@@ -27,6 +29,8 @@ export default function RootLayout({
             <div className="flex-1 flex flex-col">{children}</div>
           </Providers>
         </main>
+
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   );

@@ -9,10 +9,11 @@ import type { CredentialsValidator } from "@/lib/validators/credentials-validato
 
 import { cn } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
+import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { Icons } from "@/components/ui/icons";
 
 const Page = () => {
@@ -66,7 +67,9 @@ const Page = () => {
           />
           {errors.password && <span className="text-xs text-red-600">{errors.password?.message}</span>}
         </div>
-        <Button className="mt-2 w-full">Sign up</Button>
+        <Button type="submit" className="mt-2 w-full transition-all duration-300" disabled={isLoading}>
+          {isLoading ? <Loader2 className="animate-spin h-6 w-6" /> : <>Sign up</>}
+        </Button>
       </form>
     </Container>
   );
