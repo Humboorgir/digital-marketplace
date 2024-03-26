@@ -5,7 +5,9 @@ const Users: CollectionConfig = {
   auth: {
     verify: {
       generateEmailHTML: ({ token }) => {
-        return `<p>Hello from digital marketplace! <br/> Sign up token: ${token}</p>`;
+        return `<p>Hello from digital marketplace! <br/> 
+        Click here to verify your email: <br/>
+        <a href="${process.env.NEXT_PUBLIC_SERVER_URL!}/verify-email?token=${token}">${token}<a/></p>`;
       },
     },
   },

@@ -12,11 +12,14 @@ import { trpc } from "@/trpc/client";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 
 import { ArrowRight, Loader2 } from "lucide-react";
 import { Icons } from "@/components/ui/icons";
 
 const Page = () => {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -25,7 +28,23 @@ const Page = () => {
     resolver: zodResolver(credentialsValidator),
   });
 
-  const { isLoading, mutate } = trpc.auth.createPayloadUser.useMutation({});
+  const { isLoading, mutate } = trpc.auth.createPayloadUser.useMutation({
+    onError: (err) => {
+      if (err.data?.code === "CONFLICT") {
+        return toast.error("This email is already in use by another user.");
+      }
+
+      if (err.data?.code === "BAD_REQUEST") {
+        return toast.error(JSON.parse(err.message)[0].message);
+      }
+
+      toast.error("Something went wrong. Please try again.");
+    },
+    onSuccess: ({ sentToEmail }) => {
+      toast.success(`Verification email sent to ${sentToEmail}`);
+      router.push(`/verify-email?to=${sentToEmail}`);
+    },
+  });
 
   function onSubmit({ email, password }: CredentialsValidator) {
     mutate({ email, password });
