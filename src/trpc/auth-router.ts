@@ -1,7 +1,7 @@
+import { z } from "zod";
 import { credentialsValidator } from "../lib/validators/credentials-validator";
 import { getPayloadClient } from "../lib/getPayloadClient";
 
-import { z } from "zod";
 import { publicProcedure, router } from "./trpc";
 import { TRPCError } from "@trpc/server";
 
@@ -45,5 +45,23 @@ export const authRouter = router({
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return { success: true };
+  }),
+  signIn: publicProcedure.input(credentialsValidator).mutation(async ({ input, ctx }) => {
+    const { email, password } = input;
+    const { res } = ctx;
+    const payload = await getPayloadClient();
+    try {
+      await payload.login({
+        collection: "users",
+        data: {
+          email,
+          password,
+        },
+        res,
+      });
+      return { success: true };
+    } catch (e) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
   }),
 });

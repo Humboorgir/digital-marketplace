@@ -12,13 +12,24 @@ import { trpc } from "@/trpc/client";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { ArrowRight, Loader2 } from "lucide-react";
 import { Icons } from "@/components/ui/icons";
 
 const Page = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const origin = searchParams.get("origin");
+  const isSeller = searchParams.get("as") === "seller";
+
+  const continueAsSeller = () => {
+    router.push("?as=seller");
+  };
+
+  const continueAsCustomer = () => {
+    router.replace("/sign-in", undefined);
+  };
 
   const {
     register,
@@ -28,18 +39,19 @@ const Page = () => {
     resolver: zodResolver(credentialsValidator),
   });
 
-  const { isLoading, mutate } = trpc.auth.createPayloadUser.useMutation({
-    onSuccess: ({ sentToEmail }) => {
-      toast.success(`Verification email sent to ${sentToEmail}`);
-      router.push(`/verify-email?to=${sentToEmail}`);
+  const { isLoading, mutate: signIn } = trpc.auth.signIn.useMutation({
+    onSuccess: () => {
+      toast.success(`Successfully signed into your account`);
+      router.refresh();
+
+      if (origin) return router.push(`/${origin}`);
+      if (isSeller) return router.push("/sell");
+
+      router.push("/");
     },
     onError: (err) => {
-      if (err.data?.code === "CONFLICT") {
-        return toast.error("This email is already in use by another user.");
-      }
-
-      if (err.data?.code === "BAD_REQUEST") {
-        return toast.error(JSON.parse(err.message)[0].message);
+      if (err.data?.code === "UNAUTHORIZED") {
+        return toast.error("Invalid email or password");
       }
 
       toast.error("Something went wrong. Please try again.");
@@ -47,15 +59,17 @@ const Page = () => {
   });
 
   function onSubmit({ email, password }: CredentialsValidator) {
-    mutate({ email, password });
+    signIn({ email, password });
   }
 
   return (
     <Container className="max-w-[600px] pt-20 min-h-full flex flex-col items-center justify-center">
       <Icons.hippo className="w-20 h-20" />
-      <h1 className="font-bold text-xl sm:text-2xl mt-2 text-center">Create an account</h1>
+      <h1 className="font-bold text-xl sm:text-2xl mt-2 text-center">
+        Sign in {isSeller ? "as seller" : "to your account"}
+      </h1>
       <Button href="/sign-in" size="sm" className="flex items-center text-center" variant="link">
-        Already have an account? Sign in <ArrowRight className="w-3.5 h-3.5 ml-1" />
+        Don't have an account? Sign up <ArrowRight className="w-3.5 h-3.5 ml-1" />
       </Button>
 
       <form onSubmit={handleSubmit(onSubmit)} className="w-full mt-2">
@@ -87,9 +101,23 @@ const Page = () => {
           {errors.password && <span className="text-xs text-red-600">{errors.password?.message}</span>}
         </div>
         <Button type="submit" className="mt-2 w-full transition-all duration-300" disabled={isLoading}>
-          {isLoading ? <Loader2 className="animate-spin h-6 w-6" /> : <>Sign up</>}
+          {isLoading ? <Loader2 className="animate-spin h-6 w-6" /> : <>Sign in</>}
         </Button>
       </form>
+
+      <div className="bg-border h-[2px] w-full flex items-center justify-center text-sm text-muted-foreground mt-6">
+        <span className="bg-white px-1">OR</span>
+      </div>
+
+      {isSeller ? (
+        <Button onClick={continueAsCustomer} className="mt-6 w-full" variant="secondary">
+          Continue as customer
+        </Button>
+      ) : (
+        <Button onClick={continueAsSeller} className="mt-6 w-full" variant="secondary">
+          Continue as seller
+        </Button>
+      )}
     </Container>
   );
 };
