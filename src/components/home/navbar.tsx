@@ -7,9 +7,13 @@ import Cart from "./cart";
 import { Icons } from "../ui/icons";
 
 import Link from "next/link";
+import { cookies } from "next/headers";
+import getServerSideUser from "@/lib/payload-utilities/getServerSideUser";
+import UserAccountNav from "./user-account-nav";
 
-const Navbar = () => {
-  const user = null;
+const Navbar = async () => {
+  const { user } = await getServerSideUser(cookies());
+
   return (
     <header className="bg-white sticky z-50 top-0 inset-x-0 h-16">
       <Container>
@@ -34,10 +38,12 @@ const Navbar = () => {
               </Button>
             )}
 
+            {/* ill clean up the code here later  */}
+
             {user ? null : <span className="lg:mx-1 h-6 w-px bg-gray-200" aria-hidden="true" />}
 
             {user ? (
-              <p></p>
+              <UserAccountNav user={user} />
             ) : (
               <Button href="/sign-up" variant="ghost">
                 Create account
