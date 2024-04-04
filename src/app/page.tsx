@@ -1,5 +1,6 @@
 import Button from "@/components/ui/button";
 import Container from "@/components/ui/container";
+import ProductReel from "@/components/home/product-reel";
 
 import { ArrowDownToLine, CheckCircle, Undo2 } from "lucide-react";
 
@@ -45,7 +46,12 @@ const Home = () => {
           </div>
         </div>
 
-        {/* TODO: list products here  */}
+        <ProductReel
+          query={{ sort: "desc", limit: 10 }}
+          title="Brand new"
+          subtitle="Discover our latest products."
+          href="/products"
+        />
       </Container>
 
       <section className="bg-gray-50 border-t border-gray-200">
