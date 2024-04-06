@@ -4,9 +4,15 @@ import Button from "../ui/button";
 
 import { trpc } from "@/trpc/client";
 import { QueryValidator } from "@/lib/validators/query-validator";
-import { formatPrice } from "@/lib/formatPrice";
-
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/pagination";
+import type SwiperType from "swiper";
+import { Pagination } from "swiper/modules";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import { ChevronLeft, ChevronRight, ImageDownIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Props = {
   title: string;
@@ -28,6 +34,21 @@ const ProductReel = ({ title, subtitle, href, query }: Props) => {
 
   const products = data?.pages.flatMap((page) => page.products);
   const list = products?.length ? products : new Array<null>(query.limit ?? 4).fill(null);
+  const [swiper, setSwiper] = useState<null | SwiperType>(null);
+
+  const [slideConfig, setSlideConfig] = useState({
+    isBeginning: true,
+    isEnd: false,
+  });
+
+  useEffect(() => {
+    swiper?.on("slideChange", ({ activeIndex }) => {
+      setSlideConfig({
+        isBeginning: activeIndex === 0,
+        isEnd: activeIndex === list.length - 1,
+      });
+    });
+  }, [swiper, list]);
 
   return (
     <section className="flex flex-col space-y-4 py-12 mb-4">
@@ -45,24 +66,37 @@ const ProductReel = ({ title, subtitle, href, query }: Props) => {
         )}
       </div>
 
-      <div className="flex space-x-2">
-        {list.map((product) => {
+      <Swiper
+        onSwiper={(swiper) => setSwiper(swiper)}
+        spaceBetween={30}
+        modules={[Pagination]}
+        slidesPerView="auto"
+        className="relative h-full w-full">
+        {list.map((product, i) => {
           if (!product) return "loading";
           const imageUrl = (product.images[0].image as any).url;
           return (
-            <div className="shadow-sm w-[300px] h-[330px] border border-border rounded-md p-5 pb-0">
-              <div className="relative w-full h-[200px] overflow-hidden rounded-md bg-border">
-                <Image className="object-cover object-top" src={imageUrl} fill alt="Product image" />
+            <SwiperSlide key={i} className="!w-auto">
+              <div className="flex flex-col w-[260px]">
+                <div className="relative h-[240px] rounded-md overflow-hidden bg-border">
+                  <Image
+                    fill
+                    className="h-full w-full object-cover object-center"
+                    src={imageUrl}
+                    alt="Product image"
+                  />
+                </div>
+
+                <h3 className="mt-4 font-medium text-gray-700">{product.name}</h3>
+                <p className="mt-1 text-gray-500 overflow-hidden text-ellipsis whitespace-nowrap">
+                  {product.description}
+                </p>
+                <p className="mt-1 font-medium text-gray-900">${product.price}</p>
               </div>
-              <h3 className="mt-2 text-gray-900 font-bold text-xl">{product.name}</h3>
-              <p className="mt-1.5 text-muted-foreground text-sm whitespace-nowrap overflow-hidden text-ellipsis">
-                {product.description}
-              </p>
-              <p className="mt-2 text-gray-800">${product.price}</p>
-            </div>
+            </SwiperSlide>
           );
         })}
-      </div>
+      </Swiper>
     </section>
   );
 };
