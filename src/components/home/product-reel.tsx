@@ -4,17 +4,19 @@ import Button from "../ui/button";
 
 import { trpc } from "@/trpc/client";
 import { QueryValidator } from "@/lib/validators/query-validator";
-import { useState, useEffect } from "react";
 import ImageSlider from "../ui/image-slider";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 type Props = {
   title: string;
   subtitle?: string;
   href?: string;
   query: QueryValidator;
+  className?: string;
 };
 
-const ProductReel = ({ title, subtitle, href, query }: Props) => {
+const ProductReel = ({ title, subtitle, href, query, className }: Props) => {
   const { data } = trpc.getInfiniteProducts.useInfiniteQuery(
     {
       limit: query.limit ?? 4,
@@ -29,7 +31,7 @@ const ProductReel = ({ title, subtitle, href, query }: Props) => {
   const list = products?.length ? products : new Array<null>(query.limit ?? 4).fill(null);
 
   return (
-    <section className="flex flex-col space-y-4 py-12 mb-4">
+    <section className={cn("flex flex-col space-y-4 py-12 mb-4", className)}>
       <div className="md:flex justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">{title}</h2>
@@ -44,7 +46,7 @@ const ProductReel = ({ title, subtitle, href, query }: Props) => {
         )}
       </div>
 
-      <div className="flex flex-wrap space-x-6">
+      <div className="flex flex-wrap -ml-4">
         {list.map((product, i) => {
           if (!product) return "loading";
 
@@ -53,7 +55,9 @@ const ProductReel = ({ title, subtitle, href, query }: Props) => {
             .filter(Boolean) as string[];
 
           return (
-            <div className="flex flex-col w-[260px]">
+            <Link
+              href={`/product/${product.id}`}
+              className="flex flex-col w-[260px] hover:bg-primary/5 transition-all p-5 rounded-md">
               <ImageSlider urls={imageUrls} />
 
               <h3 className="mt-4 font-medium text-gray-700">{product.name}</h3>
@@ -61,7 +65,7 @@ const ProductReel = ({ title, subtitle, href, query }: Props) => {
                 {product.description}
               </p>
               <p className="mt-1 font-medium text-gray-900">${product.price}</p>
-            </div>
+            </Link>
           );
         })}
       </div>

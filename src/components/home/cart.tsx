@@ -1,15 +1,22 @@
+"use client";
+
 import Button from "../ui/button";
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
-
 import { ShoppingCart } from "lucide-react";
-
 import { formatPrice } from "@/lib/formatPrice";
+
 import Image from "next/image";
 
+import { useCart } from "@/hooks/useCart";
+import CartItem from "./cart-item";
+
 const Cart = () => {
-  // dummy data
-  const itemCount = 0;
-  const fee = 9450000;
+  const { items } = useCart();
+  const itemCount = items.length;
+  const total = items.reduce((total, { product }) => total + product.price, 0);
+
+  // 9% transaction fee
+  const fee = (total * 9) / 100;
 
   const hasItems = itemCount > 0;
 
@@ -32,7 +39,11 @@ const Cart = () => {
 
         {hasItems ? (
           <>
-            <div className="flex flex-col w-full text-gray-700 text-sm pr-6">Cart items</div>
+            <div className="flex flex-col w-full text-gray-700 text-sm">
+              {items.map((item) => {
+                return <CartItem product={item.product} />;
+              })}
+            </div>
             {/* Seperator  */}
             <div className="h-[1px] w-full bg-border shrink-0 my-2" />
             <div className="space-y-1.5 text-sm text-gray-700">
@@ -46,7 +57,7 @@ const Cart = () => {
               </div>
               <div className="flex">
                 <span className="flex-1">Total</span>
-                <span>{formatPrice(fee)}</span>
+                <span>{formatPrice(total)}</span>
               </div>
             </div>
           </>
