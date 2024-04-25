@@ -7,17 +7,28 @@ import { PRODUCT_CATEGORIES } from "@/config";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/formatPrice";
 import { Media } from "@/payload-types";
+import { trpc } from "@/trpc/client";
 import { Check, X } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const Page = () => {
   const { items, removeItem } = useCart();
+  const router = useRouter();
+
+  const productIds = items.map(({ product }) => product.id);
 
   const hasItems = Boolean(items.length);
   const total = items.reduce((total, { product }) => total + product.price, 0);
   // 9% transaction fee
   const fee = (total * 9) / 100;
+
+  const { mutate: createSession, isLoading } = trpc.payment.createSession.useMutation({
+    onSuccess({ link }) {
+      router.push(link);
+    },
+  });
 
   return (
     <Container className="py-12 flex flex-col items-center">
@@ -57,6 +68,7 @@ const Page = () => {
                   <Button
                     variant="ghost"
                     size="sm"
+                    onClick={() => removeItem(product.id)}
                     className="bg-red-200 hover:bg-red-100 text-red-800 hover:text-red-800 w-fit mt-2 text-sm">
                     <X className="w-5 h-5 mr-1" /> Remove product
                   </Button>
@@ -95,7 +107,11 @@ const Page = () => {
           </div>
         </div>
 
-        <Button className="w-full mt-6" size="lg">
+        <Button
+          disabled={isLoading}
+          onClick={() => createSession({ productIds })}
+          className="w-full mt-6"
+          size="lg">
           Checkout
         </Button>
       </section>

@@ -51,8 +51,6 @@ export interface Product {
   category: 'ui_kits' | 'icons';
   productFiles: string | ProductFile;
   approvedForSale?: ('pending' | 'approved' | 'denied') | null;
-  priceId?: string | null;
-  idpayId?: string | null;
   images: {
     image: string | Media;
     id?: string | null;
@@ -125,8 +123,9 @@ export interface Media {
 export interface Order {
   id: string;
   _isPaid: boolean;
-  user: string | User;
   products: (string | Product)[];
+  user: string | User;
+  authority: string;
   updatedAt: string;
   createdAt: string;
 }
