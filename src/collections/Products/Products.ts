@@ -77,26 +77,6 @@ const Products: CollectionConfig = {
       ],
     },
     {
-      name: "priceId",
-      access: {
-        create: () => false,
-        read: () => false,
-        update: () => false,
-      },
-      type: "text",
-      admin: { hidden: true },
-    },
-    {
-      name: "idpayId",
-      access: {
-        create: () => false,
-        read: () => false,
-        update: () => false,
-      },
-      type: "text",
-      admin: { hidden: true },
-    },
-    {
       name: "images",
       label: "Product images",
       type: "array",
