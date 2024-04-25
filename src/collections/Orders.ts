@@ -37,6 +37,13 @@ const Orders: CollectionConfig = {
       required: true,
     },
     {
+      name: "products",
+      type: "relationship",
+      relationTo: "products",
+      required: true,
+      hasMany: true,
+    },
+    {
       name: "user",
       type: "relationship",
       admin: {
@@ -46,11 +53,12 @@ const Orders: CollectionConfig = {
       required: true,
     },
     {
-      name: "products",
-      type: "relationship",
-      relationTo: "products",
+      name: "authority",
+      type: "text",
       required: true,
-      hasMany: true,
+      admin: {
+        hidden: true,
+      },
     },
   ],
 };
