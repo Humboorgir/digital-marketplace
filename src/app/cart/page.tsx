@@ -12,6 +12,7 @@ import { Check, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 
 const Page = () => {
   const { items, removeItem } = useCart();
@@ -26,7 +27,12 @@ const Page = () => {
 
   const { mutate: createSession, isLoading } = trpc.payment.createSession.useMutation({
     onSuccess({ link }) {
-      router.push(link);
+      // router.push(link);
+      router.push("/cart/transaction");
+    },
+    onError({ data }) {
+      if (data?.code != "UNAUTHORIZED") return;
+      toast.error("You must be logged in to checkout.");
     },
   });
 
