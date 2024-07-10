@@ -26,7 +26,7 @@ export const paymentRouter = router({
       };
       const { authority } = res;
 
-      await payload.create({
+      const order = await payload.create({
         collection: "orders",
         data: {
           _isPaid: false,
@@ -36,6 +36,6 @@ export const paymentRouter = router({
         },
       });
 
-      return { link: `https://www.zarinpal.com/pg/StartPay/${authority}` };
+      return { link: `https://www.zarinpal.com/pg/StartPay/${authority}`, orderId: order.id };
     }),
 });

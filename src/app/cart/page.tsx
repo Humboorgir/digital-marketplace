@@ -26,9 +26,9 @@ const Page = () => {
   const fee = (total * 9) / 100;
 
   const { mutate: createSession, isLoading } = trpc.payment.createSession.useMutation({
-    onSuccess({ link }) {
+    onSuccess({ orderId }) {
       // router.push(link);
-      router.push("/cart/transaction");
+      router.push("/transaction/" + orderId);
     },
     onError({ data }) {
       if (data?.code != "UNAUTHORIZED") return;
