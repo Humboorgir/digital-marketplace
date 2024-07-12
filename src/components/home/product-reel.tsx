@@ -46,9 +46,22 @@ const ProductReel = ({ title, subtitle, href, query, className }: Props) => {
         )}
       </div>
 
-      <div className="flex flex-wrap -ml-4">
+      <div className="flex overflow-x-auto -ml-4">
         {list.map((product, i) => {
-          if (!product) return "loading";
+          if (!product)
+            return (
+              <div
+                key={i}
+                className="flex flex-col shrink-0 w-[260px] hover:bg-primary/5 transition-all p-5 rounded-md">
+                <div className="w-full h-[240px] bg-gray-300 mb-4 animate-pulse rounded-md" />
+                <div className="mb-1.5 bg-gray-300 w-full h-2 rounded-full" />
+                <div className="mb-1.5 bg-gray-300 w-full h-2 rounded-full" />
+                <div
+                  className="mb-1.5 bg-gray-300 h-2 rounded-full"
+                  style={{ width: Math.floor(Math.random() * 51 + 40) }}
+                />
+              </div>
+            );
 
           const imageUrls = product.images
             .map(({ image }) => (typeof image === "string" ? image : image.url))
@@ -56,6 +69,7 @@ const ProductReel = ({ title, subtitle, href, query, className }: Props) => {
 
           return (
             <Link
+              key={i}
               href={`/product/${product.id}`}
               className="flex flex-col w-[260px] hover:bg-primary/5 transition-all p-5 rounded-md">
               <ImageSlider urls={imageUrls} />

@@ -41,7 +41,7 @@ const Cart = () => {
           <>
             <div className="flex flex-col w-full text-gray-700 text-sm">
               {items.map((item) => {
-                return <CartItem product={item.product} />;
+                return <CartItem key={item.product.id} product={item.product} />;
               })}
             </div>
             {/* Seperator  */}

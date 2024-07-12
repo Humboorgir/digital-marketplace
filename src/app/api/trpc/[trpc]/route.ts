@@ -7,8 +7,8 @@ const handler = (req: Request) => {
     req,
     router: appRouter,
     // @ts-ignore
-    createContext: ({}) => ({}),
+    createContext: () => ({}),
   });
 };
 
-export { handler as Get, handler as Post };
+export { handler as GET, handler as POST };

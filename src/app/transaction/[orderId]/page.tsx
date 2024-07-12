@@ -121,7 +121,8 @@ const Page = async ({ params }: PageProps) => {
                 <a
                   href={downloadUrl}
                   download={product.name}
-                  className="flex items-center bg-primary mt-4 font-medium px-4 py-2 rounded-md text-primary-foreground hover:bg-primary/90 active:bg-primary/80">
+                  className="flex items-center bg-primary mt-4 font-medium px-4 py-2 rounded-md 
+                  text-primary-foreground hover:bg-primary/90 active:bg-primary/80">
                   <Download className="h-4 w-4 mr-1.5" /> DOWNLOAD
                 </a>
               )}
